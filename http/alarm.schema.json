@@ -1,0 +1,36 @@
+{
+	"title": "Alarms",
+	"type": "array",
+	"items": {
+		"required":["name"],
+		"type": "object",
+		"title": "Alarm",
+		"headerTemplate": "Alarm {{ i1 }} - {{ self.name }} ({{self.time}})",
+		"properties": {
+			"time": {
+				"type":"string",
+				"format":"time",
+				"title":"Time",
+				"default":"08:00"
+			},
+			"name": {
+				"type":"string",
+				"title":"Name",
+				"propertyOrder":500
+			},
+			"days":{
+				"type": "object",
+				"options":{"disable_collapse":true},
+				"properties": {
+					"0":{"title":"Monday","type":"boolean","format": "checkbox","default":true},
+					"1":{"title":"Tuesday","type":"boolean","format": "checkbox","default":true},
+					"2":{"title":"Wednesday","type":"boolean","format": "checkbox","default":true},
+					"3":{"title":"Thursday","type":"boolean","format": "checkbox","default":true},
+					"4":{"title":"Friday","type":"boolean","format": "checkbox","default":true},
+					"5":{"title":"Saturday","type":"boolean","format": "checkbox"},
+					"6":{"title":"Sunday","type":"boolean","format": "checkbox"}
+				}
+			}
+		}
+	}
+}

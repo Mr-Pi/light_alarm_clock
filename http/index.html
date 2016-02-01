@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<title>Light alarm</title>
+
+		<meta name="language" content="en" />
+		<meta name="description" content="simple light alarm clock" />
+		<meta name="title" content="Light alarm" />
+		<meta name="author" content="Mr. Pi <mrpi@mr-pi.de>" />
+		<meta name="publisher" content="Mr. Pi" />
+		<meta name="copyright" content="Mr. Pi, 2016" />
+		<meta name="abstract" content="simple light alarm clock" />
+		<meta name="revisit" content="30 days" />
+		<meta name="revisit-after" content="30 days" />
+		<meta name="robots" content="index, follows" />
+
+		<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+	</head>
+	<body>
+		<h1>Light alarm clock</h1>
+
+		<div id="editor_holder"></div>
+
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+		<script src="https://cdn.rawgit.com/jdorn/json-editor/master/dist/jsoneditor.min.js"></script>
+		<script>
+			JSONEditor.defaults.options.theme = 'bootstrap3'
+			var editor = new JSONEditor(document.getElementById("editor_holder"), {
+				disable_array_reorder:true,
+				disable_edit_json:true,
+				disable_properties:true,
+				disable_properties:true,
+				schema: 
+{
+	"title": "Alarms",
+	"type": "array",
+	"items": {
+		"required":["name"],
+		"type": "object",
+		"title": "Alarm",
+		"headerTemplate": "Alarm {{ i1 }} - {{ self.name }} ({{self.time}})",
+		"properties": {
+			"time": {
+				"type":"string",
+				"format":"time",
+				"title":"Time",
+				"default":"08:00"
+			},
+			"name": {
+				"type":"string",
+				"title":"Name",
+				"propertyOrder":500
+			},
+			"days":{
+				"type": "object",
+				"options":{"disable_collapse":true},
+				"properties": {
+					"0":{"title":"Monday","type":"boolean","format": "checkbox","default":true},
+					"1":{"title":"Tuesday","type":"boolean","format": "checkbox","default":true},
+					"2":{"title":"Wednesday","type":"boolean","format": "checkbox","default":true},
+					"3":{"title":"Thursday","type":"boolean","format": "checkbox","default":true},
+					"4":{"title":"Friday","type":"boolean","format": "checkbox","default":true},
+					"5":{"title":"Saturday","type":"boolean","format": "checkbox"},
+					"6":{"title":"Sunday","type":"boolean","format": "checkbox"}
+				}
+			}
+		}
+	}
+}
+			})
+			var xmlReqGet = new XMLHttpRequest();
+			var xmlReqPost = new XMLHttpRequest();
+			var urlbase = "http://"+window.location.hostname
+			xmlReqGet.open("GET", urlbase+"/alarm.json", true)
+			xmlReqGet.setRequestHeader("Content-Type","application/json")
+			xmlReqGet.onreadystatechange = function () {
+				if(this.readyState == 4) {
+					editor.setValue(JSON.parse(this.response))
+					editor.on('change',function() {
+						xmlReqPost.open("POST", urlbase+"/set.lua", true)
+						xmlReqPost.setRequestHeader("Content-Type","application/json")
+						xmlReqPost.send(JSON.stringify({time:Math.floor(Date.now()/1000),alarms:editor.getValue()}))
+					})
+				}
+			}
+			xmlReqGet.send()
+		</script>
+	</body>
+</html>
