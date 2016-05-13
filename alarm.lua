@@ -21,7 +21,7 @@ function alarm.sync()
 			syncs.failed=syncs.failed+1
 			syncreport("failed to resolve ntp dns record")
 		else
-			sntp.sync("ntp.selfnet.de",
+			sntp.sync("1.pool.ntp.org",
 			function(sec,usec,server)
 				syncs.successfully=syncs.successfully+1
 				h,m,s,wd = time.get(sec)
